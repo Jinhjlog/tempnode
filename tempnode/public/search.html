@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <title>Document</title>
+  </head>
+  <body>
+    <h1>search Page</h1>
+
+    <div>
+      <input type="text" name="search" />
+      <button id="searchImgBtn">검색</button>
+    </div>
+
+    <div id="imgList"></div>
+  </body>
+
+  <script>
+    $("button[id='searchImgBtn']").click(function () {
+      let searchText = $("input[name='search']").val();
+
+      let searchData = searchImg(searchText);
+
+      console.log(searchData);
+      console.log("dataLength : " + searchData.data.length);
+
+      for (let i = 0; i < searchData.data.length; i++) {
+        console.log(searchData.data[i].img_search);
+      }
+
+      $("#imgList > div").remove();
+      viewImg(searchData);
+    });
+
+    function viewImg(searchData) {
+      for (let i = 0; i < searchData.data.length; i++) {
+        $("#imgList").append(
+          "<div id='imgBox'><img src='data:image/jpeg;base64," +
+            searchData.data[i].img_binary_data +
+            "'></div>"
+        );
+      }
+    }
+
+    function searchImg(search) {
+      let value;
+      $.ajax({
+        type: "GET",
+        async: false,
+        url: "http://localhost:3000/api/searchImg/" + search,
+        contentType: "application/json",
+
+        success: function (result) {
+          if (result == 0) {
+            alert("통신 오류");
+            return false;
+          } else if (result == 9) {
+            alert("통신 오류");
+            return false;
+          } else {
+            value = result;
+          }
+        },
+        error: function (jqXHR, status, error) {
+          alert("알 수 없는 에러 [ " + error + " ]");
+        },
+      });
+
+      return value;
+    }
+  </script>
+</html>
